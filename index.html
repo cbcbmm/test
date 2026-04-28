@@ -2,23 +2,51 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>나는 어떤 독립운동가였을까?</title>
+<title>독립운동가 테스트</title>
 
 <style>
 body {
+  margin: 0;
   font-family: sans-serif;
-  text-align: center;
-  padding: 20px;
   background: #111;
   color: #fff;
+  text-align: center;
 }
 
-h2 {
-  margin-bottom: 30px;
+/* 표지 */
+#cover {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: url('cover.jpg') center/cover no-repeat;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
-.question {
-  margin: 25px 0;
+#cover h1 {
+  font-size: 28px;
+  margin-bottom: 20px;
+  background: rgba(0,0,0,0.5);
+  padding: 10px 20px;
+  border-radius: 10px;
+}
+
+#startBtn {
+  padding: 14px 28px;
+  font-size: 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #fff;
+  color: #000;
+}
+
+/* 테스트 */
+#quizPage {
+  display: none;
+  padding: 20px;
 }
 
 button.choice {
@@ -28,8 +56,8 @@ button.choice {
   padding: 10px;
   text-align: left;
   cursor: pointer;
-  border: none;
   border-radius: 6px;
+  border: none;
 }
 
 .selected {
@@ -42,11 +70,17 @@ button.choice {
   max-width: 500px;
   margin-top: 30px;
   border-radius: 12px;
-  box-shadow: 0 15px 40px rgba(0,0,0,0.6);
 }
 
-#actions {
-  margin-top: 20px;
+.card {
+  max-width: 500px;
+  margin: 20px auto;
+  text-align: left;
+  line-height: 1.6;
+}
+
+.section {
+  margin-top: 15px;
 }
 </style>
 
@@ -57,7 +91,6 @@ button.choice {
 <h2>나는 어떤 독립운동가였을까?</h2>
 
 <div id="quiz"></div>
-
 <button onclick="submit()">결과 보기</button>
 
 <div id="result"></div>
@@ -65,44 +98,134 @@ button.choice {
 
 <script>
 
-// 질문
+// 질문 & 선택지 (동일)
 const questions = [
-"Q1. 어두운 공간, 어디선가 낯선 소리가 들린다. 당신의 첫 반응은?",
-"Q2. 중요한 정보를 얻었다. 동시에 추적이 시작됐다. 당신의 선택은?",
-"Q3. 동료가 붙잡히기 직전이다. 몇 초 안에 결정해야 한다. 당신의 행동은?",
-"Q4. 계획이 틀어졌다. 준비된 선택지는 없다. 당신의 대응은?",
-"Q5. 마지막 선택의 순간이다. 하나만 지킬 수 있다면?"
+"Q1. 혼란 속, 아무도 눈치채지 못한 중요한 기록을 발견했다. 당신의 첫 반응은?",
+"Q2. 목숨을 걸고 얻은 결정적인 정보. 지금 이 순간, 당신의 선택은?",
+"Q3. 동료가 적에게 쫓기고 있다. 지금 당신의 행동은?",
+"Q4. 계획에 없던 변수가 발생했다. 당신은 어떻게 대응하는가?",
+"Q5. 모든 것이 무너질 수도 있는 마지막 순간. 당신이 지키려는 것은?"
 ];
 
-// 선택지
 const choices = [
 [
-"A. 멈춰서 상황을 먼저 파악한다",
-"B. 주변 사람들의 반응을 살피며 판단한다",
-"C. 생각보다 먼저 몸이 움직인다"
+"A. 아무도 모르게, 조용히 기록으로 남긴다",
+"B. 이 사실을 반드시 알려야 한다고 판단한다",
+"C. 상황을 바꾸기 위해 즉시 움직인다"
 ],
 [
-"A. 정보를 숨기고 안전하게 보관한다",
-"B. 위험을 감수하고 다른 사람들과 공유한다",
-"C. 정보를 활용해 바로 흐름을 바꾼다"
+"A. 끝까지 숨겨 지켜낸다",
+"B. 위험을 감수하고 모두에게 공개한다",
+"C. 지금 당장 전략적으로 활용한다"
 ],
 [
-"A. 개입하지 않고 상황을 끝까지 지켜본다",
-"B. 주변과 함께 구출할 방법을 찾는다",
-"C. 위험을 감수하고 직접 구하러 나선다"
+"A. 상황을 지켜보며 타이밍을 본다",
+"B. 주변 사람들을 모아 함께 대응한다",
+"C. 망설임 없이 뛰어들어 구한다"
 ],
 [
-"A. 상황을 정리하고 새로운 계획을 세운다",
-"B. 사람들과 협력해 해결 방법을 찾는다",
-"C. 빠르게 결단하고 즉시 실행한다"
+"A. 침착하게 분석하며 해결책을 찾는다",
+"B. 동료들과 협력해 해결한다",
+"C. 빠르게 돌파한다"
 ],
 [
-"A. 진실과 원칙",
-"B. 함께하는 사람",
-"C. 반드시 만들어낼 결과"
+"A. 어떤 일이 있어도 ‘진실’",
+"B. 끝까지 지켜야 할 ‘사람’",
+"C. 반드시 만들어낼 ‘결과’"
 ]
 ];
 
+// 결과 데이터 ⭐
+const resultData = {
+  기록자: {
+    name:"그림자 속 기록자",
+    line:"사라져도, 진실은 남는다.",
+    desc1:"보이지 않는 곳에서 모든 것을 기록한다.",
+    desc2:"당신의 손끝에서 역사는 지워지지 않는다.",
+    traits:"기록, 관찰, 집요함",
+    pros:"집중력 높음, 사실 왜곡 없음",
+    cons:"행동력 부족, 감정 표현 약함",
+    summary:"침묵으로 남기는 사람",
+    code:"흔적"
+  },
+  선동가: {
+    name:"불꽃의 선동가",
+    line:"당신 하나로, 불이 붙는다.",
+    desc1:"사람들의 마음에 불을 지핀다.",
+    desc2:"당신의 한 마디가 시대를 움직인다.",
+    traits:"영향력, 열정, 표현력",
+    pros:"사람을 움직이는 힘, 카리스마",
+    cons:"감정 과열, 충돌 가능성",
+    summary:"변화를 시작하는 사람",
+    code:"불씨"
+  },
+  실행가: {
+    name:"침투하는 실행가",
+    line:"막혀 있다면, 부수면 된다.",
+    desc1:"망설임 없이 움직인다.",
+    desc2:"결과는 언제나 당신의 발걸음 뒤에 남는다.",
+    traits:"속도, 결단, 행동",
+    pros:"즉각 실행, 위기 대응 강함",
+    cons:"충동성, 계획 부족",
+    summary:"행동으로 증명하는 사람",
+    code:"돌파"
+  },
+  정보원: {
+    name:"비밀의 정보원",
+    line:"보이지 않지만, 모든 것을 안다.",
+    desc1:"어둠 속에서 흐름을 읽는다.",
+    desc2:"당신은 누구보다 먼저 진실에 닿는다.",
+    traits:"은밀함, 분석, 정보력",
+    pros:"통찰력, 상황 파악 능력",
+    cons:"고립감, 신뢰 문제",
+    summary:"숨어서 움직이는 핵심",
+    code:"그림자"
+  },
+  교육자: {
+    name:"의지의 교육자",
+    line:"사람을 바꾸면, 세상이 바뀐다.",
+    desc1:"지식이 아닌 의지를 전한다.",
+    desc2:"당신이 남긴 생각은 계속 이어진다.",
+    traits:"가르침, 신념, 영향",
+    pros:"지속적 영향력, 설득력",
+    cons:"느린 변화, 답답함",
+    summary:"사람을 움직이는 사람",
+    code:"신념"
+  },
+  연결자: {
+    name:"물결의 연결자",
+    line:"작은 시작은, 결국 번져간다.",
+    desc1:"사람과 흐름을 연결한다.",
+    desc2:"당신이 만든 연결은 멈추지 않는다.",
+    traits:"연결, 흐름, 전달",
+    pros:"관계 형성, 중재 능력",
+    cons:"주도성 부족, 희생적",
+    summary:"퍼지게 만드는 사람",
+    code:"파문"
+  },
+  전략가: {
+    name:"독립군 전략가",
+    line:"판은 이미, 당신의 머릿속에 있다.",
+    desc1:"모든 흐름을 계산한다.",
+    desc2:"싸우기 전에 이미 이긴다.",
+    traits:"계획, 분석, 설계",
+    pros:"큰 그림, 리스크 관리",
+    cons:"과도한 계산, 실행 지연",
+    summary:"결과를 설계하는 사람",
+    code:"판도"
+  },
+  수호자: {
+    name:"희생의 수호자",
+    line:"끝까지, 무너지지 않는다.",
+    desc1:"앞에서 모든 것을 막아낸다.",
+    desc2:"당신이 있기에 누군가는 살아남는다.",
+    traits:"보호, 책임, 인내",
+    pros:"헌신, 안정감",
+    cons:"자기희생 과다, 부담",
+    summary:"마지막까지 버티는 사람",
+    code:"방패"
+  }
+};
 let answers = [];
 
 // 성향 점수
