@@ -5,6 +5,89 @@
 <title>독립운동가 테스트</title>
 
 <style>
+/* =========================
+   📱 모바일 최적화
+========================= */
+
+@media (max-width: 768px) {
+
+  body {
+    font-size: 16px;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* 커버 */
+  #cover h1 {
+    font-size: 20px;
+    padding: 10px 14px;
+  }
+
+  #cover p {
+    font-size: 14px;
+  }
+
+  #cover img {
+    max-width: 95%;
+    max-height: 50%;
+  }
+
+  /* 퀴즈 영역 */
+  #quizPage {
+    padding: 12px;
+  }
+
+  h2 {
+    font-size: 18px;
+  }
+
+  /* 질문 간격 줄이기 */
+  .question {
+    margin: 18px 0;
+  }
+
+  .question p {
+    font-size: 15px;
+    line-height: 1.4;
+  }
+
+  /* 버튼 최적화 (핵심) */
+  button.choice {
+    width: 95%;
+    max-width: none;
+    font-size: 15px;
+    padding: 14px;
+    margin: 8px auto;
+    border-radius: 10px;
+  }
+
+  /* 결과 이미지 */
+  #result img {
+    width: 95%;
+    max-width: 100%;
+    margin-top: 20px;
+  }
+
+  /* 결과 버튼 */
+  #actions button {
+    width: 90%;
+    font-size: 16px;
+    padding: 14px;
+  }
+}
+
+/* =========================
+   📲 터치 UX 개선
+========================= */
+
+button {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+button.choice:active {
+  transform: scale(0.98);
+  transition: 0.1s;
+}
 body {
   margin: 0;
   font-family: sans-serif;
