@@ -2,13 +2,15 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>독립운동가 테스트</title>
+<title>나는 어떤 독립운동가였을까?</title>
 
 <style>
 body {
   font-family: sans-serif;
   text-align: center;
   padding: 20px;
+  background: #111;
+  color: #fff;
 }
 
 h2 {
@@ -17,10 +19,8 @@ h2 {
 
 .question {
   margin: 25px 0;
-  font-size: 18px;
 }
 
-/* 선택 버튼 */
 button.choice {
   display: block;
   width: 320px;
@@ -28,28 +28,28 @@ button.choice {
   padding: 10px;
   text-align: left;
   cursor: pointer;
+  border: none;
+  border-radius: 6px;
 }
 
 .selected {
-  background-color: #333;
+  background-color: #444;
   color: #fff;
 }
 
-/* 결과 카드 */
 #result img {
   width: 90%;
   max-width: 500px;
-  border-radius: 12px;
-  box-shadow: 0 15px 40px rgba(0,0,0,0.4);
   margin-top: 30px;
+  border-radius: 12px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.6);
 }
 
-/* 하단 버튼 */
 #actions {
   margin-top: 20px;
 }
-
 </style>
+
 </head>
 
 <body>
@@ -65,53 +65,65 @@ button.choice {
 
 <script>
 
+// 질문
 const questions = [
-"Q1. 혼란 속, 당신은 우연히 중요한 정보를 들었다. 어떻게 하겠는가?",
-"Q2. 위험을 감수하고 얻은 중요한 정보. 당신의 선택은?",
+"Q1. 혼란 속, 아무도 눈치채지 못한 중요한 기록을 발견했다. 당신의 첫 반응은?",
+"Q2. 목숨을 걸고 얻은 결정적인 정보. 지금 이 순간, 당신의 선택은?",
 "Q3. 동료가 적에게 쫓기고 있다. 지금 당신의 행동은?",
 "Q4. 계획에 없던 변수가 발생했다. 당신은 어떻게 대응하는가?",
 "Q5. 모든 것이 무너질 수도 있는 마지막 순간. 당신이 지키려는 것은?"
 ];
 
+// 선택지
 const choices = [
 [
-"A. 아무도 모르게, 조용히 기록을 남긴다",
-"B. 이 사실을 반드시 알려야 한다고 생각한다",
-"C. 더 늦기 전에 혼자서라도 직접 행동에 나선다"
+"A. 아무도 모르게, 조용히 기록으로 남긴다",
+"B. 이 사실을 반드시 알려야 한다고 판단한다",
+"C. 상황을 바꾸기 위해 즉시 움직인다"
 ],
 [
-"A. 들키지 않도록 끝까지 숨겨 지킨다",
-"B. 위험을 감수하고 모두에게 공유한다",
-"C. 지금 당장 이 정보를 활용한다"
+"A. 끝까지 숨겨 지켜낸다",
+"B. 위험을 감수하고 모두에게 공개한다",
+"C. 지금 당장 전략적으로 활용한다"
 ],
 [
-"A. 상황을 끝까지 지켜보며 타이밍을 본다",
+"A. 상황을 지켜보며 타이밍을 본다",
 "B. 주변 사람들을 모아 함께 대응한다",
 "C. 망설임 없이 뛰어들어 구한다"
 ],
 [
-"A. 침착하게 상황을 분석하며 해결책을 찾는다",
-"B. 동료들과 협력해 돌파구를 만든다",
-"C. 생각할 시간 없이 빠르게 돌파한다"
+"A. 침착하게 분석하며 해결책을 찾는다",
+"B. 동료들과 협력해 해결한다",
+"C. 빠르게 돌파한다"
 ],
 [
-"A. 끝까지 포기할 수 없는 ‘진실’",
-"B. 어떤 순간에도 지켜야 할 ‘사람’",
-"C. 반드시 만들어내야 하는 ‘결과’"
+"A. 어떤 일이 있어도 ‘진실’",
+"B. 끝까지 지켜야 할 ‘사람’",
+"C. 반드시 만들어낼 ‘결과’"
 ]
 ];
 
 let answers = [];
 
+// 성향 점수
+let trait = {
+  I:0, E:0,
+  S:0, A:0,
+  J:0, P:0,
+  T:0,
+  V:0, R:0
+};
+
+// 질문별 매핑
 const map = [
-  {A:["기록자","전략가"], B:["선동가","교육자"], C:["실행가","정보원"]},
-  {A:["기록자","정보원"], B:["선동가","수호자"], C:["실행가","전략가"]},
-  {A:["기록자","연결자"], B:["선동가","교육자"], C:["실행가","전략가"]},
-  {A:["기록자","수호자"], B:["선동가","연결자"], C:["실행가","정보원"]},
-  {A:["기록자","정보원"], B:["선동가","교육자"], C:["실행가","전략가"]}
+  {A:"I", B:"E", C:"P"},
+  {A:"S", B:"T", C:"A"},
+  {A:"J", B:"T", C:"P"},
+  {A:"J", B:"T", C:"P"},
+  {A:"V", B:"T", C:"R"}
 ];
 
-// 👉 카드 이미지 그대로 사용
+// 이미지 매핑 (파일명 맞춰주세요)
 const imageMap = {
   기록자:"record.jpg",
   선동가:"fire.jpg",
@@ -125,7 +137,7 @@ const imageMap = {
 
 const quizDiv = document.getElementById("quiz");
 
-// 질문 생성
+// 질문 출력
 questions.forEach((q, i) => {
   const div = document.createElement("div");
   div.className = "question";
@@ -159,22 +171,50 @@ function submit() {
     return;
   }
 
-  let score = {
-    기록자:0, 선동가:0, 실행가:0, 정보원:0,
-    교육자:0, 연결자:0, 전략가:0, 수호자:0
-  };
+  // 초기화
+  for (let key in trait) trait[key] = 0;
 
+  // 점수 계산
   answers.forEach((a,i)=>{
-    map[i][a].forEach(t=>score[t]++);
+    trait[ map[i][a] ]++;
   });
 
-  let result = Object.keys(score).reduce((a,b)=> score[a]>score[b]?a:b);
+  calculateResult();
+}
+
+// 코드 생성
+function calculateResult() {
+
+  const code =
+    (trait.I >= trait.E ? "I" : "E") +
+    (trait.S >= trait.A ? "S" : "A") +
+    (trait.J >= trait.P ? "J" : "P") +
+    (trait.T >= 2 ? "T" : "F") +
+    (trait.V >= trait.R ? "V" : "R");
+
+  matchType(code);
+}
+
+// 유형 매칭
+function matchType(code) {
+
+  let result = "";
+
+  if(code.includes("I") && code.includes("J")) result = "기록자";
+  else if(code.includes("E") && code.includes("T")) result = "선동가";
+  else if(code.includes("P") && code.includes("R")) result = "실행가";
+  else if(code.includes("I") && code.includes("S")) result = "정보원";
+  else if(code.includes("T") && code.includes("V")) result = "교육자";
+  else if(code.includes("E") && code.includes("V")) result = "연결자";
+  else if(code.includes("J") && code.includes("A")) result = "전략가";
+  else result = "수호자";
 
   showResult(result);
 }
 
-// 🎯 결과: 카드 이미지만 출력
+// 결과 출력 (카드만)
 function showResult(result) {
+
   document.getElementById("quiz").style.display = "none";
 
   document.getElementById("result").innerHTML = `
