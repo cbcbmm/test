@@ -5,89 +5,6 @@
 <title>독립운동가 테스트</title>
 
 <style>
-/* =========================
-   📱 모바일 최적화
-========================= */
-
-@media (max-width: 768px) {
-
-  body {
-    font-size: 16px;
-    -webkit-text-size-adjust: 100%;
-  }
-
-  /* 커버 */
-  #cover h1 {
-    font-size: 20px;
-    padding: 10px 14px;
-  }
-
-  #cover p {
-    font-size: 14px;
-  }
-
-  #cover img {
-    max-width: 95%;
-    max-height: 50%;
-  }
-
-  /* 퀴즈 영역 */
-  #quizPage {
-    padding: 12px;
-  }
-
-  h2 {
-    font-size: 18px;
-  }
-
-  /* 질문 간격 줄이기 */
-  .question {
-    margin: 18px 0;
-  }
-
-  .question p {
-    font-size: 15px;
-    line-height: 1.4;
-  }
-
-  /* 버튼 최적화 (핵심) */
-  button.choice {
-    width: 95%;
-    max-width: none;
-    font-size: 15px;
-    padding: 14px;
-    margin: 8px auto;
-    border-radius: 10px;
-  }
-
-  /* 결과 이미지 */
-  #result img {
-    width: 95%;
-    max-width: 100%;
-    margin-top: 20px;
-  }
-
-  /* 결과 버튼 */
-  #actions button {
-    width: 90%;
-    font-size: 16px;
-    padding: 14px;
-  }
-}
-
-/* =========================
-   📲 터치 UX 개선
-========================= */
-
-button {
-  -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
-}
-
-button.choice:active {
-  transform: scale(0.98);
-  transition: 0.1s;
-}
 body {
   margin: 0;
   font-family: sans-serif;
@@ -109,19 +26,17 @@ body {
 #cover img {
   max-width: 90%;
   max-height: 60%;
-  object-fit: contain;
 }
 
 #cover h1 {
-  font-size: 28px;
+  font-size: 26px;
   background: rgba(0,0,0,0.5);
-  padding: 12px 20px;
+  padding: 12px 18px;
   border-radius: 10px;
 }
 
 #cover p {
-  margin-top: 15px;
-  font-size: 16px;
+  font-size: 14px;
   background: rgba(0,0,0,0.5);
   padding: 8px 14px;
   border-radius: 8px;
@@ -134,38 +49,88 @@ body {
 }
 
 .question {
-  margin: 25px 0;
+  margin: 20px 0;
 }
 
 button.choice {
   display: block;
-  width: 320px;
-  margin: 6px auto;
-  padding: 10px;
-  text-align: left;
-  cursor: pointer;
-  border-radius: 6px;
+  width: 90%;
+  margin: 8px auto;
+  padding: 14px;
+  border-radius: 10px;
   border: none;
+  text-align: left;
+  background: #222;
+  color: white;
 }
 
 .selected {
-  background-color: #444;
-  color: #fff;
+  background: #444;
 }
 
-#result img {
-  width: 90%;
-  max-width: 500px;
-  margin-top: 30px;
-  border-radius: 12px;
-}
-
-#actions button {
+/* next */
+#nextBtn {
   margin-top: 20px;
-  padding: 10px 20px;
-  border-radius: 8px;
+  padding: 12px;
+  width: 90%;
   border: none;
-  cursor: pointer;
+  border-radius: 10px;
+  background: #444;
+  color: white;
+}
+
+#nextBtn:disabled {
+  opacity: 0.4;
+}
+
+/* 결과 */
+#resultPage {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: #111;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+#resultContent {
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+}
+
+#resultContent img {
+  width: 100%;
+  border-radius: 16px;
+  margin-bottom: 20px;
+}
+
+.result-title {
+  font-size: 26px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.result-line {
+  font-size: 15px;
+  color: #ccc;
+  margin-bottom: 20px;
+}
+
+.result-btn {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  background: #444;
+  color: white;
+  font-size: 16px;
 }
 </style>
 
@@ -177,35 +142,32 @@ button.choice {
 <div id="cover">
   <img src="cover.jpg">
   <h1>전생에 나는 어떤 독립운동가였을까?</h1>
-  <p>화면을 클릭하면 시작됩니다 ▶</p>
+  <p>클릭하면 시작 ▶</p>
 </div>
 
 <!-- 퀴즈 -->
 <div id="quizPage">
-  <h2>나는 어떤 독립운동가였을까?</h2>
-
   <div id="quiz"></div>
-  <button onclick="submit()">결과 보기</button>
+</div>
 
-  <div id="result"></div>
-  <div id="actions"></div>
+<!-- 결과 (중요: JS 밖에 있어야 함) -->
+<div id="resultPage">
+  <div id="resultContent"></div>
 </div>
 
 <script>
-(() => {
+"use strict";
 
-  "use strict";
-
-  /* =====================
-     데이터
-  ===================== */
+/* =====================
+   데이터
+===================== */
 
 const questions = [
-"Q1. 혼란 속, 아무도 눈치채지 못한 중요한 기록을 발견했다. 당신의 첫 반응은?",
-"Q2. 목숨을 걸고 얻은 결정적인 정보. 지금 이 순간, 당신의 선택은?",
-"Q3. 동료가 적에게 쫓기고 있다. 지금 당신의 행동은?",
-"Q4. 계획에 없던 변수가 발생했다. 당신은 어떻게 대응하는가?",
-"Q5. 모든 것이 무너질 수도 있는 마지막 순간. 당신이 지키려는 것은?"
+"혼란 속, 아무도 눈치채지 못한 중요한 기록을 발견했다. 당신의 첫 반응은?",
+"목숨을 걸고 얻은 결정적인 정보. 지금 이 순간, 당신의 선택은?",
+"동료가 적에게 쫓기고 있다. 지금 당신의 행동은?",
+"계획에 없던 변수가 발생했다. 당신은 어떻게 대응하는가?",
+"모든 것이 무너질 수도 있는 마지막 순간. 당신이 지키려는 것은?"
 ];
 
 const choices = [
@@ -236,174 +198,162 @@ const choices = [
 ]
 ];
 
-  const map = [
-    {A:"I", B:"E", C:"P"},
-    {A:"S", B:"T", C:"A"},
-    {A:"J", B:"T", C:"P"},
-    {A:"J", B:"T", C:"P"},
-    {A:"V", B:"T", C:"R"}
-  ];
 
-  const imageMap = {
-    기록자:"record.jpg",
-    선동가:"fire.jpg",
-    실행가:"run.jpg",
-    정보원:"info.jpg",
-    교육자:"teach.jpg",
-    연결자:"connect.jpg",
-    전략가:"plan.jpg",
-    수호자:"guard.jpg"
-  };
+const map = [
+{A:"I", B:"E", C:"P"},
+{A:"S", B:"T", C:"A"},
+{A:"J", B:"T", C:"P"},
+{A:"J", B:"T", C:"P"},
+{A:"V", B:"T", C:"R"}
+];
 
-  /* =====================
-     상태
-  ===================== */
+const imageMap = {
+기록자:"record.jpg",
+선동가:"fire.jpg",
+실행가:"run.jpg",
+정보원:"info.jpg",
+교육자:"teach.jpg",
+연결자:"connect.jpg",
+전략가:"plan.jpg",
+수호자:"guard.jpg"
+};
 
-  const answers = [];
+/* =====================
+   상태
+===================== */
 
-  const trait = {
-    I:0, E:0,
-    S:0, A:0,
-    J:0, P:0,
-    T:0,
-    V:0, R:0
-  };
+let current = 0;
+let answers = [];
 
-  /* =====================
-     DOM 로딩 안전 처리
-  ===================== */
+const trait = {
+I:0,E:0,S:0,A:0,J:0,P:0,T:0,V:0,R:0
+};
 
-  document.addEventListener("DOMContentLoaded", init);
+/* =====================
+   시작
+===================== */
 
-  function init() {
-    renderQuestions();
-    bindEvents();
+document.getElementById("cover")
+.addEventListener("click", startTest);
+
+function startTest() {
+  document.getElementById("cover").style.display = "none";
+  document.getElementById("quizPage").style.display = "block";
+
+  current = 0;
+  answers = [];
+
+  renderQuestion();
+}
+
+/* =====================
+   질문 렌더
+===================== */
+
+function renderQuestion() {
+
+  const quiz = document.getElementById("quiz");
+
+  quiz.innerHTML = `
+    <div class="question">
+      <p><b>Q${current+1}.</b> ${questions[current]}</p>
+
+      <button class="choice" onclick="select('A', this)">${choices[current][0]}</button>
+      <button class="choice" onclick="select('B', this)">${choices[current][1]}</button>
+      <button class="choice" onclick="select('C', this)">${choices[current][2]}</button>
+
+      <button id="nextBtn" onclick="next()" disabled>다음</button>
+    </div>
+  `;
+}
+
+/* =====================
+   선택
+===================== */
+
+window.select = function(value, btn) {
+
+  answers[current] = value;
+
+  document.querySelectorAll(".choice")
+  .forEach(b => b.classList.remove("selected"));
+
+  btn.classList.add("selected");
+
+  document.getElementById("nextBtn").disabled = false;
+};
+
+/* =====================
+   다음
+===================== */
+
+window.next = function() {
+
+  current++;
+
+  if (current >= questions.length) {
+    return showResult(calcResult());
   }
 
-  /* =====================
-     시작
-  ===================== */
+  renderQuestion();
+};
 
-  function bindEvents() {
-    document.getElementById("cover")
-      .addEventListener("click", startTest);
-  }
+/* =====================
+   결과 계산
+===================== */
 
-  function startTest() {
-    document.getElementById("cover").style.display = "none";
-    document.getElementById("quizPage").style.display = "block";
-  }
+function calcResult() {
 
-  /* =====================
-     질문 렌더링
-  ===================== */
+  for (let k in trait) trait[k] = 0;
 
-  function renderQuestions() {
-    const quizDiv = document.getElementById("quiz");
-    if (!quizDiv) return;
+  answers.forEach((a,i)=>{
+    trait[map[i][a]]++;
+  });
 
-    questions.forEach((q, i) => {
-      const div = document.createElement("div");
-      div.className = "question";
+  const code =
+    (trait.I>=trait.E?"I":"E") +
+    (trait.S>=trait.A?"S":"A") +
+    (trait.J>=trait.P?"J":"P") +
+    (trait.T>=2?"T":"F") +
+    (trait.V>=trait.R?"V":"R");
 
-      div.innerHTML = `
-        <p>${q}</p>
-        <button class="choice" data-i="${i}" data-v="A">${choices[i][0]}</button>
-        <button class="choice" data-i="${i}" data-v="B">${choices[i][1]}</button>
-        <button class="choice" data-i="${i}" data-v="C">${choices[i][2]}</button>
-      `;
+  let r = "수호자";
 
-      quizDiv.appendChild(div);
-    });
+  if(code.includes("I") && code.includes("J")) r="기록자";
+  else if(code.includes("E") && code.includes("T")) r="선동가";
+  else if(code.includes("P") && code.includes("R")) r="실행가";
+  else if(code.includes("I") && code.includes("S")) r="정보원";
+  else if(code.includes("T") && code.includes("V")) r="교육자";
+  else if(code.includes("E") && code.includes("V")) r="연결자";
+  else if(code.includes("J") && code.includes("A")) r="전략가";
 
-    quizDiv.addEventListener("click", handleSelect);
-  }
+  return r;
+}
 
-  /* =====================
-     선택 처리 (이벤트 위임)
-  ===================== */
+/* =====================
+   결과 UI
+===================== */
 
-  function handleSelect(e) {
-    const btn = e.target;
-    if (!btn.classList.contains("choice")) return;
+function showResult(r) {
 
-    const i = Number(btn.dataset.i);
-    const v = btn.dataset.v;
+  document.getElementById("quizPage").style.display = "none";
+  document.getElementById("resultPage").style.display = "flex";
 
-    answers[i] = v;
+  document.getElementById("resultContent").innerHTML = `
+    <img src="${imageMap[r]}">
 
-    const parent = btn.parentElement;
-    parent.querySelectorAll(".choice")
-      .forEach(b => b.classList.remove("selected"));
+    <div class="result-title">${r}</div>
 
-    btn.classList.add("selected");
-  }
+    <div class="result-line">
+      당신의 독립운동가 성향이 결정되었습니다
+    </div>
 
-  /* =====================
-     제출
-  ===================== */
+    <button class="result-btn" onclick="location.reload()">
+      다시하기
+    </button>
+  `;
+}
 
-  window.submit = function () {
-
-    const validCount = answers.filter(v => v).length;
-
-    if (validCount < 5) {
-      alert("모든 질문에 답해주세요!");
-      return;
-    }
-
-    // 초기화
-    for (let k in trait) trait[k] = 0;
-
-    // 점수 계산
-    answers.forEach((a, i) => {
-      if (a && map[i][a]) {
-        trait[map[i][a]]++;
-      }
-    });
-
-    calculateResult();
-  };
-
-  function calculateResult() {
-
-    const code =
-      (trait.I >= trait.E ? "I" : "E") +
-      (trait.S >= trait.A ? "S" : "A") +
-      (trait.J >= trait.P ? "J" : "P") +
-      (trait.T >= 2 ? "T" : "F") +
-      (trait.V >= trait.R ? "V" : "R");
-
-    matchType(code);
-  }
-
-  function matchType(code) {
-
-    let result = "수호자";
-
-    if (code.includes("I") && code.includes("J")) result = "기록자";
-    else if (code.includes("E") && code.includes("T")) result = "선동가";
-    else if (code.includes("P") && code.includes("R")) result = "실행가";
-    else if (code.includes("I") && code.includes("S")) result = "정보원";
-    else if (code.includes("T") && code.includes("V")) result = "교육자";
-    else if (code.includes("E") && code.includes("V")) result = "연결자";
-    else if (code.includes("J") && code.includes("A")) result = "전략가";
-
-    showResult(result);
-  }
-
-  function showResult(result) {
-
-    document.getElementById("quiz").style.display = "none";
-
-    document.getElementById("result").innerHTML =
-      `<img src="${imageMap[result]}">`;
-
-    document.getElementById("actions").innerHTML =
-      `<button onclick="location.reload()">다시하기</button>`;
-  }
-
-})();
 </script>
 
 </body>
