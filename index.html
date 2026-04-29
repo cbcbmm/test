@@ -54,19 +54,66 @@ body {
 
 button.choice {
   display: block;
-  width: 90%;
-  margin: 8px auto;
-  padding: 14px;
-  border-radius: 10px;
-  border: none;
+  width: 70%;
+  max-width: 420px;
+  margin: 10px auto;
+
+  padding: 14px 16px;
+
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.08);
+
   text-align: left;
-  background: #222;
-  color: white;
+
+  background: linear-gradient(145deg, #1f1f1f, #151515);
+  color: #fff;
+
+  font-size: 15px;
+  line-height: 1.4;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+
+  -webkit-tap-highlight-color: transparent;
 }
 
-.selected {
-  background: #444;
+/* 선택된 상태 */
+button.choice.selected {
+  background: linear-gradient(145deg, #3a3a3a, #2a2a2a);
+  border: 1px solid rgba(255,255,255,0.2);
+  transform: scale(1.02);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.4);
 }
+
+/* 모바일 터치 느낌 */
+button.choice:active {
+  transform: scale(0.98);
+}
+
+/* 질문 영역 정렬 (있으면 더 예쁨) */
+.question {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+window.select = function(value, btn) {
+
+  answers[current] = value;
+
+  const buttons = document.querySelectorAll(".choice");
+
+  buttons.forEach(b => {
+    b.classList.remove("selected");
+  });
+
+  btn.classList.add("selected");
+
+  document.getElementById("nextBtn").disabled = false;
+};
 
 /* next */
 #nextBtn {
@@ -132,6 +179,20 @@ button.choice {
   color: white;
   font-size: 16px;
 }
+  .choice {
+  transition: all 0.2s ease;
+}
+
+.choice.selected {
+  background: #5a5a5a;
+  transform: scale(1.02);
+  box-shadow: 0 0 10px rgba(255,255,255,0.1);
+}
+
+.choice:active {
+  transform: scale(0.98);
+}
+  
 </style>
 
 </head>
@@ -343,10 +404,6 @@ function showResult(r) {
     <img src="${imageMap[r]}">
 
     <div class="result-title">${r}</div>
-
-    <div class="result-line">
-      당신의 독립운동가 성향이 결정되었습니다
-    </div>
 
     <button class="result-btn" onclick="location.reload()">
       다시하기
