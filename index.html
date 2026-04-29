@@ -123,10 +123,15 @@ button.choice:active {
   flex-direction: column;
   padding: 20px;
   box-sizing: border-box;
+  overflow-y: auto;           /* 스크롤 가능 */
+  justify-content: flex-start; /* 중앙 → 위쪽 정렬 */
+  padding-top: 40px;          /* 위 여백 */
 }
 
 #resultContent {
+  width: 100%;
   max-width: 720px;
+  margin: 0 auto 40px; /* 아래 여백 추가 */
 }
 
 #resultContent img {
@@ -134,10 +139,7 @@ button.choice:active {
   max-height: 80vh;
   object-fit: contain;
   border-radius: 20px;
-}
-
-#resultPage {
-  overflow-y: auto;
+  margin-bottom: 20px;
 }
 
 .result-title {
