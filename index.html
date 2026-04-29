@@ -50,43 +50,37 @@ body {
 
 .question {
   margin: 20px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-  .question p {
+.question p {
   font-size: 20px;
   font-weight: 600;
   line-height: 1.5;
 }
-  
+
+/* 선택지 */
 button.choice {
   display: block;
   width: 70%;
   max-width: 420px;
   margin: 10px auto;
-
   padding: 14px 16px;
-
   border-radius: 14px;
   border: 1px solid rgba(255,255,255,0.08);
-
   text-align: left;
-
   background: linear-gradient(145deg, #1f1f1f, #151515);
   color: #fff;
-
   font-size: 17px;
   line-height: 1.4;
-
   cursor: pointer;
-
   transition: all 0.2s ease;
-
   box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-
   -webkit-tap-highlight-color: transparent;
 }
 
-/* 선택된 상태 */
 button.choice.selected {
   background: #666;
   border: 1px solid #888;
@@ -94,49 +88,28 @@ button.choice.selected {
   box-shadow: 0 6px 14px rgba(0,0,0,0.3);
 }
 
-/* 모바일 터치 느낌 */
 button.choice:active {
   transform: scale(0.98);
 }
 
-/* 질문 영역 정렬 (있으면 더 예쁨) */
-.question {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-window.select = function(value, btn) {
-
-  answers[current] = value;
-
-  const buttons = document.querySelectorAll(".choice");
-
-  buttons.forEach(b => {
-    b.classList.remove("selected");
-  });
-
-  btn.classList.add("selected");
-
-  document.getElementById("nextBtn").disabled = false;
-};
-
-/* next */
+/* 다음 버튼 */
 #nextBtn {
   margin-top: 20px;
   padding: 12px;
-  width: 90%;
+  width: 70%;
+  max-width: 420px;
   border: none;
   border-radius: 10px;
   background: #444;
   color: white;
+  font-size: 16px;
 }
 
 #nextBtn:disabled {
   opacity: 0.4;
 }
 
-/* 결과 */
+/* 결과 화면 */
 #resultPage {
   display: none;
   position: fixed;
@@ -170,12 +143,6 @@ window.select = function(value, btn) {
   margin-bottom: 10px;
 }
 
-.result-line {
-  font-size: 15px;
-  color: #ccc;
-  margin-bottom: 20px;
-}
-
 .result-btn {
   width: 100%;
   padding: 14px;
@@ -185,22 +152,7 @@ window.select = function(value, btn) {
   color: white;
   font-size: 16px;
 }
-  .choice {
-  transition: all 0.2s ease;
-}
-
-.choice.selected {
-  background: #5a5a5a;
-  transform: scale(1.02);
-  box-shadow: 0 0 10px rgba(255,255,255,0.1);
-}
-
-.choice:active {
-  transform: scale(0.98);
-}
-  
 </style>
-
 </head>
 
 <body>
@@ -209,7 +161,6 @@ window.select = function(value, btn) {
 <div id="cover">
   <img src="cover.jpg">
   <h1>전생에 나는 어떤 독립운동가였을까?</h1>
-  <p>클릭하면 시작 ▶</p>
 </div>
 
 <!-- 퀴즈 -->
@@ -217,7 +168,7 @@ window.select = function(value, btn) {
   <div id="quiz"></div>
 </div>
 
-<!-- 결과 (중요: JS 밖에 있어야 함) -->
+<!-- 결과 -->
 <div id="resultPage">
   <div id="resultContent"></div>
 </div>
@@ -225,10 +176,7 @@ window.select = function(value, btn) {
 <script>
 "use strict";
 
-/* =====================
-   데이터
-===================== */
-
+/* 데이터 */
 const questions = [
 "혼란 속, 아무도 눈치채지 못한 중요한 기록을 발견했다. 당신의 첫 반응은?",
 "목숨을 걸고 얻은 결정적인 정보. 지금 이 순간, 당신의 선택은?",
@@ -265,13 +213,12 @@ const choices = [
 ]
 ];
 
-
 const map = [
-{A:"I", B:"E", C:"P"},
-{A:"S", B:"T", C:"A"},
-{A:"J", B:"T", C:"P"},
-{A:"J", B:"T", C:"P"},
-{A:"V", B:"T", C:"R"}
+{A:"I",B:"E",C:"P"},
+{A:"S",B:"T",C:"A"},
+{A:"J",B:"T",C:"P"},
+{A:"J",B:"T",C:"P"},
+{A:"V",B:"T",C:"R"}
 ];
 
 const imageMap = {
@@ -285,45 +232,30 @@ const imageMap = {
 수호자:"guard.jpg"
 };
 
-/* =====================
-   상태
-===================== */
-
+/* 상태 */
 let current = 0;
 let answers = [];
 
-const trait = {
-I:0,E:0,S:0,A:0,J:0,P:0,T:0,V:0,R:0
-};
+const trait = {I:0,E:0,S:0,A:0,J:0,P:0,T:0,V:0,R:0};
 
-/* =====================
-   시작
-===================== */
-
-document.getElementById("cover")
-.addEventListener("click", startTest);
+/* 시작 */
+document.getElementById("cover").onclick = startTest;
 
 function startTest() {
   document.getElementById("cover").style.display = "none";
   document.getElementById("quizPage").style.display = "block";
-
   current = 0;
   answers = [];
-
   renderQuestion();
 }
 
-/* =====================
-   질문 렌더
-===================== */
-
+/* 질문 */
 function renderQuestion() {
-
   const quiz = document.getElementById("quiz");
 
   quiz.innerHTML = `
     <div class="question">
-      <p><b>Q${current+1}.</b> ${questions[current]}</p>
+      <p>Q${current+1}. ${questions[current]}</p>
 
       <button class="choice" onclick="select('A', this)">${choices[current][0]}</button>
       <button class="choice" onclick="select('B', this)">${choices[current][1]}</button>
@@ -334,48 +266,26 @@ function renderQuestion() {
   `;
 }
 
-/* =====================
-   선택
-===================== */
-
+/* 선택 */
 window.select = function(value, btn) {
-
   answers[current] = value;
-
-  document.querySelectorAll(".choice")
-  .forEach(b => b.classList.remove("selected"));
-
+  document.querySelectorAll(".choice").forEach(b => b.classList.remove("selected"));
   btn.classList.add("selected");
-
   document.getElementById("nextBtn").disabled = false;
 };
 
-/* =====================
-   다음
-===================== */
-
+/* 다음 */
 window.next = function() {
-
   current++;
-
-  if (current >= questions.length) {
-    return showResult(calcResult());
-  }
-
+  if (current >= questions.length) return showResult(calcResult());
   renderQuestion();
 };
 
-/* =====================
-   결과 계산
-===================== */
-
+/* 결과 계산 */
 function calcResult() {
-
   for (let k in trait) trait[k] = 0;
 
-  answers.forEach((a,i)=>{
-    trait[map[i][a]]++;
-  });
+  answers.forEach((a,i)=> trait[map[i][a]]++);
 
   const code =
     (trait.I>=trait.E?"I":"E") +
@@ -384,39 +294,27 @@ function calcResult() {
     (trait.T>=2?"T":"F") +
     (trait.V>=trait.R?"V":"R");
 
-  let r = "수호자";
+  if(code.includes("I") && code.includes("J")) return "기록자";
+  if(code.includes("E") && code.includes("T")) return "선동가";
+  if(code.includes("P") && code.includes("R")) return "실행가";
+  if(code.includes("I") && code.includes("S")) return "정보원";
+  if(code.includes("T") && code.includes("V")) return "교육자";
+  if(code.includes("E") && code.includes("V")) return "연결자";
+  if(code.includes("J") && code.includes("A")) return "전략가";
 
-  if(code.includes("I") && code.includes("J")) r="기록자";
-  else if(code.includes("E") && code.includes("T")) r="선동가";
-  else if(code.includes("P") && code.includes("R")) r="실행가";
-  else if(code.includes("I") && code.includes("S")) r="정보원";
-  else if(code.includes("T") && code.includes("V")) r="교육자";
-  else if(code.includes("E") && code.includes("V")) r="연결자";
-  else if(code.includes("J") && code.includes("A")) r="전략가";
-
-  return r;
+  return "수호자";
 }
 
-/* =====================
-   결과 UI
-===================== */
-
+/* 결과 UI */
 function showResult(r) {
-
   document.getElementById("quizPage").style.display = "none";
   document.getElementById("resultPage").style.display = "flex";
 
   document.getElementById("resultContent").innerHTML = `
     <img src="${imageMap[r]}">
-
-    <div class="result-title">${r}</div>
-
-    <button class="result-btn" onclick="location.reload()">
-      다시하기
-    </button>
+    <button class="result-btn" onclick="location.reload()">다시하기</button>
   `;
 }
-
 </script>
 
 </body>
